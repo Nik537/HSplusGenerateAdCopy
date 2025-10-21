@@ -30,9 +30,10 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install Python dependencies (force rebuild - remove OpenAI)
+# Install Python dependencies - rebuild without cache
 COPY backend/requirements.txt ./backend/
-RUN pip install --no-cache-dir -r backend/requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir --force-reinstall -r backend/requirements.txt
 
 # Copy backend
 COPY backend/ ./backend/
