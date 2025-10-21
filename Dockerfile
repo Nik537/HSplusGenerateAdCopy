@@ -44,10 +44,10 @@ COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 COPY .env.example .
 
 # Expose port
-EXPOSE 5000
+EXPOSE 8080
 
 # Set working directory to backend
 WORKDIR /app/backend
 
-# Run the Flask app
-CMD ["python", "app.py"]
+# Run with gunicorn for production
+CMD gunicorn --bind 0.0.0.0:$PORT app:app
