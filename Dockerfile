@@ -7,8 +7,9 @@ WORKDIR /app
 # Install Python dependencies with version check
 COPY backend/requirements.txt ./backend/
 RUN pip install --upgrade pip && \
+    pip install --no-cache-dir httpx==0.24.1 && \
     pip install --no-cache-dir -r backend/requirements.txt && \
-    pip list | grep anthropic
+    pip list | grep -E "(anthropic|httpx)"
 
 # Copy backend code
 COPY backend/ ./backend/
