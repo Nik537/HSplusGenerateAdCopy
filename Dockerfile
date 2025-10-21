@@ -1,5 +1,6 @@
 # Single-stage build - backend only (frontend served separately via Firebase)
-FROM python:3.11-slim
+# Using specific digest to force rebuild and bypass cache
+FROM python:3.11.9-slim
 
 WORKDIR /app
 
