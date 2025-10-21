@@ -13,6 +13,32 @@ class CopyGenerator:
         if self.anthropic_key:
             self.anthropic_client = Anthropic(api_key=self.anthropic_key)
 
+    def _truncate_at_word_boundary(self, text: str, max_length: int) -> str:
+        """
+        Truncate text at word boundary to avoid cutting words in half
+
+        Args:
+            text: Text to truncate
+            max_length: Maximum allowed length
+
+        Returns:
+            Truncated text ending with complete word
+        """
+        if len(text) <= max_length:
+            return text
+
+        # Find the last space before max_length
+        truncated = text[:max_length]
+        last_space = truncated.rfind(' ')
+
+        # If we found a space, cut there
+        if last_space > max_length * 0.8:  # Don't cut too aggressively
+            return text[:last_space].rstrip()
+
+        # If no good space found, just cut at max_length
+        # but try to avoid cutting emojis or special chars
+        return truncated.rstrip()
+
     def generate_ad_copy(
         self,
         product_name: str,
@@ -102,18 +128,34 @@ class CopyGenerator:
                             max_body_length = max_chars - overhead - 10  # 10 char safety margin
 
                             if len(body) > max_body_length:
-                                # Truncate body at last complete sentence or emoji
+                                # Truncate body at sentence boundary first
                                 truncated_body = body[:max_body_length]
-                                # Find last sentence ending
+                                # Try to find last sentence ending
                                 last_period = max(truncated_body.rfind('.'), truncated_body.rfind('!'), truncated_body.rfind('?'))
                                 if last_period > max_body_length * 0.6:  # Only if we don't lose too much
                                     truncated_body = truncated_body[:last_period + 1]
+                                else:
+                                    # If no good sentence boundary, truncate at word boundary
+                                    truncated_body = self._truncate_at_word_boundary(body, max_body_length)
 
                                 variant['body'] = truncated_body
 
-                            # Recalculate character count
-                            full_text = f"{variant.get('hook', '')}\n\n{variant.get('body', '')}\n\n{variant.get('cta', '')}"
-                            variant['character_count'] = len(full_text)
+                        # Final check: ensure each field ends with complete word
+                        for field in ['hook', 'body', 'cta']:
+                            if field in variant and isinstance(variant[field], str):
+                                # Check if field ends mid-word (has letter/digit at end but not punctuation)
+                                text = variant[field].rstrip()
+                                if text and text[-1].isalnum() and len(text) > 1:
+                                    # Check if the last character could be part of a truncated word
+                                    # by looking for a space near the end
+                                    last_space = text.rfind(' ')
+                                    if last_space > len(text) * 0.9:  # Space is near the end
+                                        # Might be truncated, apply word boundary check
+                                        variant[field] = self._truncate_at_word_boundary(text, len(text))
+
+                        # Recalculate character count
+                        full_text = f"{variant.get('hook', '')}\n\n{variant.get('body', '')}\n\n{variant.get('cta', '')}"
+                        variant['character_count'] = len(full_text)
 
                 return result
 
@@ -236,7 +278,11 @@ CTA REQUIREMENTS:
 - Include urgency + benefit: "Shop Now - Fast EU Delivery!"
 - Use directional emojis: 👇 ➡️
 
-CRITICAL: Each variant MUST be under {max_chars} characters total. No exceptions.
+CRITICAL RULES:
+1. Each variant MUST be under {max_chars} characters total (including all text)
+2. NEVER cut words in half - always end with complete words
+3. If approaching character limit, end with a complete word, NOT mid-word
+4. Better to be 5-10 chars under the limit than to cut a word
 
 Format as JSON:
 {{
