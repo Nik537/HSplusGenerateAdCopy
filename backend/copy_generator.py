@@ -2,23 +2,16 @@ import os
 import json
 from typing import Dict, List
 from anthropic import Anthropic
-from openai import OpenAI
 
 class CopyGenerator:
     """Generate Facebook ad copy using Claude API or OpenAI API"""
 
-    def __init__(self, anthropic_key: str = None, openai_key: str = None):
-        # Initialize Anthropic
+    def __init__(self, anthropic_key: str = None):
+        # Initialize Anthropic (Claude API only)
         self.anthropic_key = anthropic_key or os.getenv('ANTHROPIC_API_KEY')
         self.anthropic_client = None
         if self.anthropic_key:
             self.anthropic_client = Anthropic(api_key=self.anthropic_key)
-
-        # Initialize OpenAI
-        self.openai_key = openai_key or os.getenv('OPENAI_API_KEY')
-        self.openai_client = None
-        if self.openai_key:
-            self.openai_client = OpenAI(api_key=self.openai_key)
 
     def generate_ad_copy(
         self,
