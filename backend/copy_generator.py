@@ -21,6 +21,7 @@ class CopyGenerator:
         market: str,
         objective: str,
         description: str = "",
+        style_prompt: str = "",
         model: str = "fast",
         max_chars: int = 150
     ) -> Dict:
@@ -34,6 +35,7 @@ class CopyGenerator:
             market: Target market (SI, DE, IT, AT, etc.)
             objective: Ad objective (Awareness, Conversion, Engagement)
             description: Additional product description
+            style_prompt: Additional style/tone customization instructions
             model: Model selection - "fast" (Haiku 4.5 - default) or "smart" (Sonnet 4.5)
             max_chars: Maximum character count for copy (default 150)
 
@@ -42,7 +44,7 @@ class CopyGenerator:
         """
         try:
             prompt = self._build_prompt(
-                product_name, price, features, market, objective, description, max_chars
+                product_name, price, features, market, objective, description, style_prompt, max_chars
             )
 
             # Model selection mapping (Claude only)
@@ -132,6 +134,7 @@ class CopyGenerator:
         market: str,
         objective: str,
         description: str,
+        style_prompt: str,
         max_chars: int
     ) -> str:
         """Build the prompt for Claude API using vigoshop.si best practices"""
@@ -270,6 +273,11 @@ EMOJI USAGE GUIDE (vigoshop.si patterns):
 Make each variant feel like a helpful friend sharing a clever solution, NOT a corporate ad.
 The EU shipping advantage is MANDATORY in every variant - it's the core differentiator.
 """
+
+        # Add custom style instructions if provided
+        if style_prompt and style_prompt.strip():
+            prompt += f"\n\nADDITIONAL STYLE INSTRUCTIONS:\n{style_prompt}\n"
+
         return prompt
 
     def _calculate_engagement_score(self, variant: Dict) -> int:

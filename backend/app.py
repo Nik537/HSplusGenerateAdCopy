@@ -172,6 +172,7 @@ def generate_copy():
             market=data['market'],
             objective=data['objective'],
             description=data.get('description', ''),
+            style_prompt=data.get('style_prompt', ''),  # Optional style customization
             model=data.get('model', 'claude-haiku'),  # Default to Claude Haiku 4.5
             max_chars=data.get('max_chars', 150)  # Default to 150 characters
         )

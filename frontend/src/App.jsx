@@ -12,6 +12,7 @@ function App() {
     market: 'Slovenia',
     objective: 'Conversion',
     description: '',
+    style_prompt: '',  // Additional style customization
     model: 'claude-haiku',  // Default to Claude Haiku 4.5
     max_chars: '150',  // Default to 150 characters
     customMarket: false,
@@ -102,6 +103,7 @@ function App() {
         market: formData.market,
         objective: formData.objective,
         description: formData.description,
+        style_prompt: formData.style_prompt,
         model: formData.model,
         max_chars: parseInt(formData.max_chars)
       });
@@ -179,7 +181,14 @@ function App() {
 
         {/* Right Panel - Preview */}
         <div style={styles.rightPanel}>
-          <CopyPreview variants={variants} />
+          {loading ? (
+            <div style={styles.loadingContainer}>
+              <div style={styles.spinner}></div>
+              <p style={styles.loadingText}>Generating your ad copy...</p>
+            </div>
+          ) : (
+            <CopyPreview variants={variants} />
+          )}
         </div>
       </div>
     </div>
@@ -259,6 +268,27 @@ const styles = {
     flex: 1,
     backgroundColor: '#fff',
     overflowY: 'auto'
+  },
+  loadingContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    gap: '24px'
+  },
+  spinner: {
+    width: '60px',
+    height: '60px',
+    border: '5px solid #f3f3f3',
+    borderTop: '5px solid #1877f2',
+    borderRadius: '50%',
+    animation: 'spin 1s linear infinite'
+  },
+  loadingText: {
+    fontSize: '16px',
+    color: '#666',
+    fontWeight: '500'
   }
 };
 

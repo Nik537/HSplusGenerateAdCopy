@@ -72,6 +72,19 @@ const InputForm = ({ formData, setFormData, onSubmit, loading, onLoadExample }) 
           />
         </div>
 
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Style Prompt (Optional)</label>
+          <textarea
+            name="style_prompt"
+            value={formData.style_prompt}
+            onChange={handleChange}
+            placeholder="Customize the tone and style of the output&#10;e.g., Use casual language, add more emojis, make it more urgent, etc."
+            style={{ ...styles.input, ...styles.textarea }}
+            rows="3"
+          />
+          <small style={styles.hint}>Add specific instructions for the AI about tone, style, or formatting</small>
+        </div>
+
         <div style={styles.formRow}>
           <div style={{ ...styles.formGroup, flex: 1 }}>
             <label style={styles.label}>Target Market *</label>
