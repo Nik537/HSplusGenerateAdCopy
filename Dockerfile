@@ -43,8 +43,11 @@ COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 # Copy environment template
 COPY .env.example .
 
+# Expose port for Railway
+EXPOSE 8080
+
 # Set working directory to backend
 WORKDIR /app/backend
 
-# Run with gunicorn for production - Railway sets PORT env variable
-CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:$PORT --log-level info"]
+# Run with gunicorn - use PORT env var from Railway, default to 8080
+CMD ["sh", "-c", "gunicorn app:app --bind 0.0.0.0:${PORT:-8080} --log-level info"]
