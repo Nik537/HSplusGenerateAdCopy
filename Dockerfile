@@ -49,5 +49,5 @@ EXPOSE 8080
 # Set working directory to backend
 WORKDIR /app/backend
 
-# Run with gunicorn for production
-CMD gunicorn --bind 0.0.0.0:$PORT app:app
+# Run with gunicorn for production (shell form to expand $PORT)
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8080} app:app"]
