@@ -16,16 +16,21 @@ CORS(app)  # Enable CORS for frontend
 scraper = VigoShopScraper()
 try:
     copy_generator = CopyGenerator()
-except ValueError as e:
+except Exception as e:
     print(f"Warning: {e}")
     copy_generator = None
 
 @app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
+    anthropic_configured = copy_generator and copy_generator.anthropic_client is not None
+    openai_configured = copy_generator and copy_generator.openai_client is not None
+
     return jsonify({
         'status': 'healthy',
-        'claude_api_configured': copy_generator is not None
+        'claude_api_configured': anthropic_configured,
+        'openai_api_configured': openai_configured,
+        'any_api_configured': anthropic_configured or openai_configured
     })
 
 @app.route('/scrape', methods=['POST'])
@@ -133,7 +138,7 @@ def generate_copy():
             market=data['market'],
             objective=data['objective'],
             description=data.get('description', ''),
-            model=data.get('model', 'fast'),  # Default to fast (Haiku 4.5)
+            model=data.get('model', 'claude-haiku'),  # Default to Claude Haiku 4.5
             max_chars=data.get('max_chars', 150)  # Default to 150 characters
         )
 

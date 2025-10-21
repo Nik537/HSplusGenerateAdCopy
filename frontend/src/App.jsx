@@ -12,7 +12,7 @@ function App() {
     market: 'Slovenia',
     objective: 'Conversion',
     description: '',
-    model: 'fast',  // Default to fast (Haiku 4.5)
+    model: 'claude-haiku',  // Default to Claude Haiku 4.5
     max_chars: '150',  // Default to 150 characters
     customMarket: false,
     customObjective: false,

@@ -160,10 +160,23 @@ const InputForm = ({ formData, setFormData, onSubmit, loading, onLoadExample }) 
               onChange={handleChange}
               style={styles.select}
             >
-              <option value="fast">⚡ Fast (Haiku)</option>
-              <option value="smart">🧠 Smart (Sonnet)</option>
+              <optgroup label="Claude (Anthropic)">
+                <option value="claude-haiku">⚡ Haiku 4.5 (Fast)</option>
+                <option value="claude-sonnet">🧠 Sonnet 4.5 (Smart)</option>
+              </optgroup>
+              <optgroup label="OpenAI GPT-5">
+                <option value="gpt-5">🚀 GPT-5</option>
+                <option value="gpt-5-mini">⚡ GPT-5 Mini</option>
+              </optgroup>
+              <optgroup label="OpenAI GPT-4">
+                <option value="gpt-4o">🔥 GPT-4o</option>
+                <option value="gpt-4o-mini">💨 GPT-4o Mini</option>
+              </optgroup>
+              <optgroup label="OpenAI o1">
+                <option value="o1">🎯 o1</option>
+                <option value="o1-mini">💡 o1-mini</option>
+              </optgroup>
             </select>
-            <small style={styles.hint}>Fast: 2-3s | Smart: 5-8s</small>
           </div>
 
           <div style={{ ...styles.formGroup, flex: '1' }}>
@@ -203,7 +216,6 @@ const InputForm = ({ formData, setFormData, onSubmit, loading, onLoadExample }) 
                 </button>
               </div>
             )}
-            <small style={styles.hint}>Shorter copy performs better on mobile</small>
           </div>
         </div>
 
