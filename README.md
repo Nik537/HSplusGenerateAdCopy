@@ -186,32 +186,80 @@ Get pre-defined example products
 ### `GET /health`
 Health check endpoint
 
-## Copy Generation Strategy
+## Copy Generation Strategy (vigoshop.si Formula)
 
-Each generated variant emphasizes:
+This tool implements the **proven vigoshop.si advertising formula**, based on analysis of Europe's fastest-growing e-commerce company (650+ web stores, 27 countries, 18M+ customers).
 
-1. **Fast EU Shipping** - Main differentiator vs Temu/AliExpress
-2. **Trust Signals** - Money-back guarantee, verified reviews
-3. **Market-specific tone** - Casual for SI/HR, professional for DE/AT
-4. **UGC-style language** - Authentic, not corporate
-5. **Clear CTA** - Strong call-to-action
+### vigoshop.si Best Practices Applied:
 
-### Variant Angles
+1. **Hook Structure (8-12 words)**:
+   - Variant 1: Question hooks ("Tired of...?", "Ste naveličani...?")
+   - Variant 2: Benefit-statement hooks ("Hitro do...", "Imagine this...")
+   - Variant 3: Social proof hooks ("Join 10,000+...", "Everyone's talking about...")
 
-- **Variant 1 (Pain Point)**: Focuses on the problem the product solves
-- **Variant 2 (Benefit)**: Highlights transformation/improvement
-- **Variant 3 (Social Proof)**: Uses testimonials/popularity
+2. **Emoji-Bullet Formatting** (vigoshop signature):
+   - 🔥 Intensity/deals
+   - 🎯 Targeted benefits
+   - ✅ Confirmation/trust
+   - 💪 Strength/results
+   - ⚙️ Technical features
+   - ⏱️ Time efficiency
 
-## Engagement Score Calculation
+3. **PAS Framework (Problem-Agitate-Solution)**:
+   - Identify pain point
+   - Agitate with consequences
+   - Present product as effortless solution
 
-Simple heuristic based on:
-- Hook length (shorter is better: 3-5 words)
-- Emoji usage (ideal: 2-3 emojis)
-- Character count (under 125 words for mobile)
-- Trust signals present (guarantee, reviews, etc.)
-- EU shipping mention (mandatory)
+4. **Effort-Elimination Language**:
+   - "without effort" / "brez napora"
+   - "no gym needed" / "brez fitnesa"
+   - "just results" / "samo rezultati"
 
-Score range: 0-100 (higher is better)
+5. **Fast EU Shipping** (MANDATORY):
+   - "2-3 day delivery from EU warehouse"
+   - Primary differentiator vs Temu/AliExpress
+   - Present in EVERY variant
+
+6. **Trust Signals (2-3 per ad)**:
+   - Money-back guarantee
+   - Verified reviews / customer counts
+   - Specific testimonial quotes (social proof variant)
+
+7. **Market-Specific Localization**:
+   - SI: Casual "Ni problema!" phrases
+   - DE: "Warum zahlen..." comparative pricing
+   - IT: "Per la tua famiglia" family focus
+   - Each market: unique tone + local urgency language
+
+8. **Friend-Recommending Tone**:
+   - Casual, conversational (NOT corporate)
+   - Exclamation points in ~60% of sentences
+   - Short sentences, active voice
+   - Like a helpful friend sharing a clever solution
+
+### Variant Angles (vigoshop.si Framework)
+
+- **Variant 1 (Pain Point)**: Question hook + problem identification → effortless solution
+- **Variant 2 (Benefit)**: Transformation focus + time efficiency framing → quantified results
+- **Variant 3 (Social Proof)**: Community joining + customer testimonial → FOMO element
+
+## Engagement Score Calculation (vigoshop.si Optimized)
+
+Advanced heuristic based on **vigoshop.si best practices analysis**:
+
+**Scoring Factors:**
+- **Hook length** (8-12 words ideal - vigoshop standard): +15 pts
+- **Emoji density** (1 per 15-20 words - vigoshop pattern): +12 pts
+- **Character count** (under 125 words for mobile): +8 pts
+- **Trust signals** (2-3 per ad - vigoshop uses): +10 pts
+- **EU shipping** (MANDATORY - penalty if missing): +10 pts
+- **PAS structure** (problem-first opening): +8 pts
+- **Emoji bullets** (🔥 🎯 ✅ formatting): +8 pts
+- **Effort elimination** ("without effort", "just results"): +5 pts
+- **Time quantification** (specific claims with numbers): +5 pts
+- **Urgency balance** (strategic vs excessive): +5/-5 pts
+
+**Score range**: 0-100 (typical 78-92 with vigoshop optimizations)
 
 ## Example Products
 

@@ -92,125 +92,236 @@ class CopyGenerator:
         objective: str,
         description: str
     ) -> str:
-        """Build the prompt for Claude API"""
+        """Build the prompt for Claude API using vigoshop.si best practices"""
 
         market_context = {
-            'SI': 'Slovenian market - use casual Slovenian language, emphasize local trust and fast delivery from EU',
-            'DE': 'German market - professional yet friendly tone, emphasize quality and efficiency',
-            'IT': 'Italian market - warm, family-oriented tone, emphasize style and value',
-            'AT': 'Austrian market - similar to German but slightly more casual, emphasize reliability',
-            'HR': 'Croatian market - similar to Slovenian, casual and friendly',
-            'BA': 'Bosnian market - warm, straightforward tone'
+            'SI': '''Slovenian market (vigoshop.si style):
+- Tone: Casual, friend-recommending-product style (not corporate)
+- Use phrases like "Ni problema!" (No problem!), "Samo rezultati!" (Just results!)
+- Question hooks: "Ste naveličani...?" (Tired of...?)
+- Emphasize local trust: "Tisoči zadovoljnih kupcev po Sloveniji" (Thousands of satisfied customers in Slovenia)
+- Fast EU delivery is critical differentiator''',
+            'DE': '''German market (vigoshop.si style):
+- Tone: Professional but accessible, avoid overly formal language
+- Use "Warum zahlen..." (Why pay...) for comparative pricing
+- Emphasize quality ("Deutsche Qualität") and efficiency
+- Avoid superlatives - use measured enthusiasm
+- "Jetzt einkaufen" (Shop now) for CTAs''',
+            'IT': '''Italian market (vigoshop.si style):
+- Tone: Warm, family-oriented, emotionally engaging
+- Use "Per la tua famiglia" (For your family)
+- Emphasize style, beauty, and value together
+- "La soluzione perfetta" (The perfect solution)
+- Family and community language resonates''',
+            'AT': '''Austrian market (vigoshop.si style):
+- Tone: Similar to German but slightly more casual
+- Emphasize reliability and quality
+- Professional yet approachable
+- Focus on practical benefits''',
+            'HR': '''Croatian market (vigoshop.si style):
+- Tone: Casual, friendly (similar to Slovenian)
+- Direct, straightforward language
+- Community-focused messaging
+- Emphasize local presence and fast delivery''',
+            'BA': '''Bosnian market (vigoshop.si style):
+- Tone: Warm, straightforward, no-nonsense
+- Direct benefit communication
+- Family and practical value emphasis
+- Simple, clear language'''
         }
 
-        market_tone = market_context.get(market, 'European market - professional and trustworthy tone')
+        market_tone = market_context.get(market, 'European market - professional and trustworthy tone, vigoshop.si style')
 
-        prompt = f"""You are an expert Facebook ads copywriter specializing in dropshipping products for European markets.
+        prompt = f"""You are an expert Facebook ads copywriter for vigoshop.si, specializing in dropshipping products for European markets.
 
 Product: {product_name}
 Price: {price}
 Features: {features}
 Description: {description}
-Target Market: {market} - {market_tone}
+Target Market: {market}
+Market Guidance: {market_tone}
 Ad Objective: {objective}
 
-Generate 3 Facebook ad copy variants optimized for {objective}.
+Generate 3 Facebook ad copy variants optimized for {objective} using the proven vigoshop.si advertising formula.
 
-CRITICAL REQUIREMENTS:
-1. Hook must grab attention in first 3 words
-2. MUST emphasize "Ships from EU warehouse - 2-3 day delivery" (NOT from China) - this is the main differentiator vs Temu/AliExpress
-3. Include trust signals: "100% money-back guarantee", "Thousands of satisfied customers", or "Verified reviews"
-4. Use casual, conversational tone (UGC-style, not corporate)
-5. Keep under 150 words per variant
-6. Include 2-3 relevant emojis
-7. Each variant tests different angle:
-   - Variant 1: Pain point (what problem does this solve?)
-   - Variant 2: Benefit/transformation (how will life improve?)
-   - Variant 3: Social proof (what are others saying?)
+VIGOSHOP.SI FORMULA - CRITICAL REQUIREMENTS:
+
+HOOK STRUCTURE (8-12 words):
+- Variant 1: Question hook identifying pain point (e.g., "Ste naveličani...?" / "Tired of...?")
+- Variant 2: Benefit-statement hook (e.g., "Hitro do..." / "Quickly to..." / "Imagine this...")
+- Variant 3: Social proof hook (e.g., "Everyone's talking about..." / "Join 10,000+...")
+
+BODY COPY STRUCTURE (vigoshop.si PAS framework):
+1. Problem-Agitate-Solution opening (2-3 sentences)
+2. Benefits formatted as EMOJI-PREFIXED BULLETS:
+   🔥 Benefit 1 - Brief explanation
+   🎯 Benefit 2 - Brief explanation
+   ✅ Benefit 3 - Brief explanation
+   💪 Benefit 4 - Brief explanation (if needed)
+3. Use effort-elimination language: "brez napora" (without effort), "brez potenja" (no sweating), "samo rezultati" (just results)
+4. Time efficiency framing: Quantify time savings (e.g., "20 minut = 2 km tek!")
+5. MANDATORY: "Ships from EU warehouse - 2-3 day delivery" (NOT from China) - this is THE key differentiator vs Temu/AliExpress
+
+TRUST SIGNALS (include 2-3):
+- "100% money-back guarantee" / "Garancija vračila denarja"
+- "Thousands of satisfied customers" / "Tisoči zadovoljnih kupcev"
+- "Verified 5-star reviews" / "Verificirane ocene"
+- Specific customer testimonial quote (for social proof variant)
+
+TONE & STYLE:
+- Casual, friend-recommending-product (NOT corporate or salesy)
+- Use exclamation points naturally (≈60% of sentences)
+- Emoji density: 1 emoji per 15-20 words
+- Keep under 150 words total per variant
+- Short sentences, active voice, conversational phrases
+
+URGENCY & SCARCITY (use strategically):
+- "Samo danes!" (Only today!) / "Omejena ponudba!" (Limited offer!)
+- "Limited stock" / "Don't miss out"
+- Add 🎁 for special offers
+
+CTA REQUIREMENTS:
+- Direct, action-oriented: "Naročite zdaj" (Order now), "Kliknite zdaj" (Click now)
+- Include urgency + benefit: "Shop Now - Fast EU Delivery!"
+- Use directional emojis: 👇 ➡️
 
 Format as JSON:
 {{
   "variant_1": {{
     "angle": "pain_point",
-    "hook": "First 3 words that grab attention",
-    "body": "Main ad copy text (conversational, casual tone)",
-    "cta": "Call to action (e.g., Shop Now, Get Yours, Limited Stock)",
+    "hook": "Question hook identifying pain (8-12 words)",
+    "body": "PAS framework body with emoji-bullet benefits. Casual tone. Include EU shipping, trust signals, effort-elimination language.",
+    "cta": "Direct action CTA with urgency",
     "character_count": X
   }},
   "variant_2": {{
     "angle": "benefit",
-    "hook": "First 3 words that grab attention",
-    "body": "Main ad copy text (conversational, casual tone)",
-    "cta": "Call to action",
+    "hook": "Benefit-statement hook (8-12 words)",
+    "body": "Transformation-focused body with emoji-bullet benefits. Time efficiency framing. EU shipping. Trust signals.",
+    "cta": "Direct action CTA",
     "character_count": X
   }},
   "variant_3": {{
     "angle": "social_proof",
-    "hook": "First 3 words that grab attention",
-    "body": "Main ad copy text (conversational, casual tone)",
-    "cta": "Call to action",
+    "hook": "Social proof hook (8-12 words)",
+    "body": "Community-focused body with customer testimonial. Emoji-bullet benefits. EU shipping. FOMO element.",
+    "cta": "Community-joining CTA",
     "character_count": X
   }}
 }}
 
-Make each variant feel authentic and human - like a friend recommending a product, not a salesy ad.
-Use emojis naturally (not overboard).
-The EU shipping advantage is MANDATORY to mention in every variant.
+EMOJI USAGE GUIDE (vigoshop.si patterns):
+- Benefits: 🔥 (intensity), 🎯 (targeted), ✅ (confirmation), 💪 (strength), ⚙️ (technical), ⏱️ (time)
+- Delivery: 🚀 (speed), 🚛 (logistics), 📦 (package)
+- Deals: 🎁 (gift), 🎉 (celebration), 💰 (savings)
+- Emotion: 🙃 (friendly), 😁 (happy), 💎 (value), ⭐ (quality)
+- Direction: 👇 (down), ➡️ (right)
+
+Make each variant feel like a helpful friend sharing a clever solution, NOT a corporate ad.
+The EU shipping advantage is MANDATORY in every variant - it's the core differentiator.
 """
         return prompt
 
     def _calculate_engagement_score(self, variant: Dict) -> int:
         """
-        Calculate simple heuristic engagement score (0-100)
+        Calculate engagement score (0-100) based on vigoshop.si best practices
 
         Factors:
-        - Hook length (shorter is better)
-        - Emoji usage (2-3 is ideal)
-        - Character count (under 125 is better)
+        - Hook length (8-12 words ideal for vigoshop)
+        - Emoji usage (1 per 15-20 words, vigoshop standard)
+        - Character count (under 125 is better for mobile)
         - Trust signals present
-        - CTA clarity
+        - EU shipping mention (mandatory)
+        - Problem-first structure (vigoshop PAS framework)
+        - Emoji-bullet formatting
+        - Effort-elimination language
+        - Time/quantity specificity
         """
-        score = 50  # Base score
+        score = 40  # Base score
 
         full_text = f"{variant.get('hook', '')} {variant.get('body', '')} {variant.get('cta', '')}"
+        body = variant.get('body', '')
+        body_lower = body.lower()
+        hook = variant.get('hook', '')
 
-        # Hook length (shorter = better)
-        hook_words = len(variant.get('hook', '').split())
-        if hook_words <= 3:
-            score += 15
-        elif hook_words <= 5:
-            score += 10
+        # Hook length (8-12 words ideal for vigoshop.si)
+        hook_words = len(hook.split())
+        if 8 <= hook_words <= 12:
+            score += 15  # Perfect vigoshop range
+        elif 5 <= hook_words <= 7 or 13 <= hook_words <= 15:
+            score += 12  # Close to ideal
+        elif hook_words <= 4:
+            score += 8   # Too short
         else:
-            score += 5
+            score += 5   # Too long
 
-        # Emoji count (2-3 ideal)
+        # Emoji count (vigoshop: 1 per 15-20 words)
+        total_words = len(full_text.split())
         emoji_count = sum(1 for char in full_text if ord(char) > 127000)
-        if 2 <= emoji_count <= 3:
-            score += 15
-        elif emoji_count == 1 or emoji_count == 4:
-            score += 10
+        ideal_emoji_range = (total_words / 20, total_words / 15)
+
+        if ideal_emoji_range[0] <= emoji_count <= ideal_emoji_range[1]:
+            score += 12  # Optimal vigoshop density
+        elif emoji_count >= 2 and emoji_count <= 5:
+            score += 10  # Acceptable
         else:
             score += 5
 
         # Character count (under 125 ideal for mobile)
         char_count = variant.get('character_count', 150)
         if char_count < 125:
-            score += 10
+            score += 8
         elif char_count < 150:
             score += 5
 
-        # Trust signals
-        trust_keywords = ['guarantee', 'reviews', 'verified', 'satisfied', 'customers', 'money-back']
-        body_lower = variant.get('body', '').lower()
-        if any(keyword in body_lower for keyword in trust_keywords):
+        # Trust signals (vigoshop uses 2-3 per ad)
+        trust_keywords = ['guarantee', 'reviews', 'verified', 'satisfied', 'customers', 'money-back',
+                         'garancija', 'tisoči', 'thousands', 'testimonial']
+        trust_count = sum(1 for keyword in trust_keywords if keyword in body_lower)
+        if trust_count >= 2:
             score += 10
+        elif trust_count == 1:
+            score += 5
 
-        # EU shipping mention
-        eu_keywords = ['eu warehouse', 'eu shipping', 'ships from eu', 'fast delivery', 'quick delivery']
+        # EU shipping mention (MANDATORY in vigoshop.si)
+        eu_keywords = ['eu warehouse', 'eu shipping', 'ships from eu', 'eu skladišč',
+                       'fast delivery', 'quick delivery', '2-3 day', '2-3 dni']
         if any(keyword in body_lower for keyword in eu_keywords):
-            score += 10  # Bonus for critical differentiator
+            score += 10  # Critical differentiator
+        else:
+            score -= 10  # Penalty for missing this
 
-        return min(score, 100)
+        # Problem-first structure (vigoshop PAS framework)
+        problem_indicators = ['tired of', 'struggling with', 'naveličani', 'problema',
+                             'why pay', 'warum zahlen', 'zakaj plačati']
+        if any(indicator in body_lower for indicator in problem_indicators):
+            score += 8  # Bonus for vigoshop structure
+
+        # Emoji-bullet formatting (vigoshop signature)
+        emoji_bullets = ['🔥', '🎯', '✅', '💪', '⚙️', '⏱️']
+        if any(bullet in body for bullet in emoji_bullets):
+            score += 8  # Bonus for vigoshop formatting
+
+        # Effort-elimination language (vigoshop positioning)
+        effort_words = ['without effort', 'brez napora', 'effortless', 'brez potenja',
+                       'just results', 'samo rezultati', 'no gym', 'brez fitnesa']
+        if any(word in body_lower for word in effort_words):
+            score += 5  # Bonus for vigoshop messaging
+
+        # Time/quantity specificity (vigoshop quantification)
+        import re
+        if re.search(r'\d+\s*(min|minut|hour|dni|day|km|€)', body_lower):
+            score += 5  # Bonus for specific claims
+
+        # Urgency language (but penalize overuse)
+        urgency_words = ['today', 'now', 'limited', 'danes', 'zdaj', 'omejen']
+        urgency_count = sum(1 for word in urgency_words if word in body_lower)
+        if urgency_count == 1:
+            score += 5  # Appropriate urgency
+        elif urgency_count >= 3:
+            score -= 5  # Too much urgency (trains distrust per vigoshop analysis)
+
+        return min(max(score, 0), 100)  # Clamp between 0-100
 
     def _generate_template_copy(
         self,
@@ -220,31 +331,35 @@ The EU shipping advantage is MANDATORY to mention in every variant.
         market: str,
         objective: str
     ) -> Dict:
-        """Fallback template-based copy generation"""
+        """Fallback template-based copy generation (vigoshop.si style)"""
+
+        # Extract first feature for specific benefit
+        feature_list = features.split('|')
+        first_feature = feature_list[0].strip() if feature_list else "premium quality"
 
         return {
             "variant_1": {
                 "angle": "pain_point",
-                "hook": "Tired of waiting?",
-                "body": f"Get your {product_name} delivered in just 2-3 days from our EU warehouse! 🚚 No more month-long shipping from China. {features} Now just {price}. 100% money-back guarantee! ✅",
-                "cta": "Shop Now - Fast EU Delivery!",
-                "character_count": 150,
-                "engagement_score": 75
+                "hook": "Tired of waiting weeks for products from China?",
+                "body": f"Get your {product_name} delivered in just 2-3 days from our EU warehouse! No more endless waiting. 🚀\n\n🔥 Fast EU shipping - arrives in 2-3 days, not weeks\n🎯 {first_feature}\n✅ 100% money-back guarantee\n💪 Thousands of satisfied customers across Europe\n\nJust {price} with free shipping. Order now! 🎁",
+                "cta": "Shop Now - Fast EU Delivery! 👉",
+                "character_count": 148,
+                "engagement_score": 78
             },
             "variant_2": {
                 "angle": "benefit",
-                "hook": "Imagine this...",
-                "body": f"Your {product_name} arrives in 2-3 days (yes, really! 🎉). Ships from EU warehouse - no customs, no delays. {features} Limited stock at {price}. Thousands of happy customers across Europe! 💯",
-                "cta": "Get Yours Today!",
-                "character_count": 145,
-                "engagement_score": 78
+                "hook": "Imagine getting premium quality in just 2-3 days...",
+                "body": f"Your {product_name} arrives fast from our EU warehouse - no customs, no delays! 😊\n\n🔥 Ships in 2-3 days from EU (not China!)\n🎯 {first_feature}\n⏱️ Save time - no month-long waiting\n✅ Verified 5-star reviews\n\nLimited stock at {price}. Thousands already ordered! 💎",
+                "cta": "Get Yours Today! 🚀",
+                "character_count": 142,
+                "engagement_score": 82
             },
             "variant_3": {
                 "angle": "social_proof",
-                "hook": "Everyone's talking about...",
-                "body": f"The {product_name} that's gone viral! ⭐ Verified 5-star reviews. Fast 2-3 day EU shipping (not from China!). {features} Only {price} with money-back guarantee. Don't miss out!",
-                "cta": "Join Thousands of Happy Customers!",
-                "character_count": 140,
-                "engagement_score": 82
+                "hook": "Join 10,000+ happy customers across Europe!",
+                "body": f"The {product_name} everyone's talking about! ⭐\n\n\"Best purchase this year - arrived in 2 days!\" - Real customer\n\n🔥 Fast 2-3 day EU shipping\n🎯 {first_feature}\n✅ Money-back guarantee\n💪 Verified reviews\n\nOnly {price}. Don't miss out! 🎁",
+                "cta": "Join Thousands of Happy Customers! 👇",
+                "character_count": 138,
+                "engagement_score": 85
             }
         }
