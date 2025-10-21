@@ -225,4 +225,6 @@ if __name__ == '__main__':
         print("\n⚠️  WARNING: ANTHROPIC_API_KEY not set!")
         print("Copy .env.example to .env and add your API key\n")
 
-    app.run(debug=True, port=5001)
+    # Railway needs host=0.0.0.0 and PORT env variable
+    port = int(os.environ.get('PORT', 5001))
+    app.run(host='0.0.0.0', port=port, debug=False)
