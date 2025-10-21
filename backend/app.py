@@ -40,11 +40,20 @@ def health_check():
     anthropic_configured = copy_generator and copy_generator.anthropic_client is not None
     openai_configured = copy_generator and copy_generator.openai_client is not None
 
+    # Debug: Check if env vars are set
+    anthropic_key_exists = bool(os.getenv('ANTHROPIC_API_KEY'))
+    openai_key_exists = bool(os.getenv('OPENAI_API_KEY'))
+
     return jsonify({
         'status': 'healthy',
         'claude_api_configured': anthropic_configured,
         'openai_api_configured': openai_configured,
-        'any_api_configured': anthropic_configured or openai_configured
+        'any_api_configured': anthropic_configured or openai_configured,
+        'debug': {
+            'anthropic_env_var_exists': anthropic_key_exists,
+            'openai_env_var_exists': openai_key_exists,
+            'copy_generator_exists': copy_generator is not None
+        }
     })
 
 @app.route('/scrape', methods=['POST'])
