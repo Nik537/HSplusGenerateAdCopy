@@ -19,7 +19,8 @@ class CopyGenerator:
         features: str,
         market: str,
         objective: str,
-        description: str = ""
+        description: str = "",
+        model: str = "fast"
     ) -> Dict:
         """
         Generate 3 Facebook ad copy variants
@@ -31,6 +32,7 @@ class CopyGenerator:
             market: Target market (SI, DE, IT, AT, etc.)
             objective: Ad objective (Awareness, Conversion, Engagement)
             description: Additional product description
+            model: Model selection - "fast" (Haiku 4.5 - default) or "smart" (Sonnet 4.5)
 
         Returns:
             Dictionary with 3 ad copy variants
@@ -40,8 +42,15 @@ class CopyGenerator:
                 product_name, price, features, market, objective, description
             )
 
+            # Model selection: fast (Haiku 4.5) or smart (Sonnet 4.5)
+            model_map = {
+                "fast": "claude-haiku-4-5-20251001",    # Fast, cost-effective
+                "smart": "claude-sonnet-4-5-20250929"   # Premium quality
+            }
+            selected_model = model_map.get(model, "claude-haiku-4-5-20251001")
+
             message = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
+                model=selected_model,
                 max_tokens=2000,
                 temperature=0.7,
                 messages=[

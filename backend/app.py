@@ -132,7 +132,8 @@ def generate_copy():
             features=data['features'],
             market=data['market'],
             objective=data['objective'],
-            description=data.get('description', '')
+            description=data.get('description', ''),
+            model=data.get('model', 'fast')  # Default to fast (Haiku 4.5)
         )
 
         return jsonify({

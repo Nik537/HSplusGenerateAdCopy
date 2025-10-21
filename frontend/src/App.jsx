@@ -11,7 +11,8 @@ function App() {
     features: '',
     market: 'SI',
     objective: 'Conversion',
-    description: ''
+    description: '',
+    model: 'fast'  // Default to fast (Haiku 4.5)
   });
 
   const [variants, setVariants] = useState(null);
@@ -96,7 +97,8 @@ function App() {
         features: formData.features,
         market: formData.market,
         objective: formData.objective,
-        description: formData.description
+        description: formData.description,
+        model: formData.model
       });
 
       if (response.success) {

@@ -98,6 +98,20 @@ const InputForm = ({ formData, setFormData, onSubmit, loading, onLoadExample }) 
           </div>
         </div>
 
+        <div style={styles.formGroup}>
+          <label style={styles.label}>AI Model</label>
+          <select
+            name="model"
+            value={formData.model}
+            onChange={handleChange}
+            style={styles.select}
+          >
+            <option value="fast">⚡ Fast (Haiku 4.5) - Recommended</option>
+            <option value="smart">🧠 Smart (Sonnet 4.5) - Premium Quality</option>
+          </select>
+          <small style={styles.hint}>Fast: 2-3s response | Smart: 5-8s response, better quality</small>
+        </div>
+
         <button
           type="submit"
           style={{
