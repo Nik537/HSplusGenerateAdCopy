@@ -29,12 +29,22 @@ CORS(app, resources={
 # Initialize services
 scraper = VigoShopScraper()
 copy_generator_error = None
+
+# Debug: Check anthropic version
+try:
+    import anthropic
+    anthropic_version = anthropic.__version__
+    print(f"Anthropic library version: {anthropic_version}")
+except Exception as e:
+    anthropic_version = f"Error: {e}"
+
 try:
     copy_generator = CopyGenerator()
 except Exception as e:
     import traceback
-    copy_generator_error = str(e)
+    copy_generator_error = f"{str(e)} | anthropic_version={anthropic_version}"
     print(f"Warning: Failed to initialize CopyGenerator: {e}")
+    print(f"Anthropic version: {anthropic_version}")
     print(traceback.format_exc())
     copy_generator = None
 
