@@ -9,10 +9,14 @@ function App() {
     product_name: '',
     price: '',
     features: '',
-    market: 'SI',
+    market: 'Slovenia',
     objective: 'Conversion',
     description: '',
-    model: 'fast'  // Default to fast (Haiku 4.5)
+    model: 'fast',  // Default to fast (Haiku 4.5)
+    max_chars: '150',  // Default to 150 characters
+    customMarket: false,
+    customObjective: false,
+    customMaxChars: false
   });
 
   const [variants, setVariants] = useState(null);
@@ -98,7 +102,8 @@ function App() {
         market: formData.market,
         objective: formData.objective,
         description: formData.description,
-        model: formData.model
+        model: formData.model,
+        max_chars: parseInt(formData.max_chars)
       });
 
       if (response.success) {

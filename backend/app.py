@@ -133,7 +133,8 @@ def generate_copy():
             market=data['market'],
             objective=data['objective'],
             description=data.get('description', ''),
-            model=data.get('model', 'fast')  # Default to fast (Haiku 4.5)
+            model=data.get('model', 'fast'),  # Default to fast (Haiku 4.5)
+            max_chars=data.get('max_chars', 150)  # Default to 150 characters
         )
 
         return jsonify({
@@ -208,4 +209,4 @@ if __name__ == '__main__':
         print("\n⚠️  WARNING: ANTHROPIC_API_KEY not set!")
         print("Copy .env.example to .env and add your API key\n")
 
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)

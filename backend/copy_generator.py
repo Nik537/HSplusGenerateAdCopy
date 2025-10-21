@@ -20,7 +20,8 @@ class CopyGenerator:
         market: str,
         objective: str,
         description: str = "",
-        model: str = "fast"
+        model: str = "fast",
+        max_chars: int = 150
     ) -> Dict:
         """
         Generate 3 Facebook ad copy variants
@@ -33,13 +34,14 @@ class CopyGenerator:
             objective: Ad objective (Awareness, Conversion, Engagement)
             description: Additional product description
             model: Model selection - "fast" (Haiku 4.5 - default) or "smart" (Sonnet 4.5)
+            max_chars: Maximum character count for copy (default 150)
 
         Returns:
             Dictionary with 3 ad copy variants
         """
         try:
             prompt = self._build_prompt(
-                product_name, price, features, market, objective, description
+                product_name, price, features, market, objective, description, max_chars
             )
 
             # Model selection: fast (Haiku 4.5) or smart (Sonnet 4.5)
@@ -76,21 +78,46 @@ class CopyGenerator:
 
                 result = json.loads(json_str)
 
-                # Add engagement scores
-                for variant in result.values():
+                # Enforce character limit - truncate if needed
+                for variant_key, variant in result.items():
                     if isinstance(variant, dict):
-                        variant['engagement_score'] = self._calculate_engagement_score(variant)
+                        full_text = f"{variant.get('hook', '')}\n\n{variant.get('body', '')}\n\n{variant.get('cta', '')}"
+                        actual_count = len(full_text)
+
+                        # If over limit, truncate body
+                        if actual_count > max_chars:
+                            hook = variant.get('hook', '')
+                            cta = variant.get('cta', '')
+                            body = variant.get('body', '')
+
+                            # Calculate available space for body
+                            overhead = len(hook) + len(cta) + 4  # 4 for newlines
+                            max_body_length = max_chars - overhead - 10  # 10 char safety margin
+
+                            if len(body) > max_body_length:
+                                # Truncate body at last complete sentence or emoji
+                                truncated_body = body[:max_body_length]
+                                # Find last sentence ending
+                                last_period = max(truncated_body.rfind('.'), truncated_body.rfind('!'), truncated_body.rfind('?'))
+                                if last_period > max_body_length * 0.6:  # Only if we don't lose too much
+                                    truncated_body = truncated_body[:last_period + 1]
+
+                                variant['body'] = truncated_body
+
+                            # Recalculate character count
+                            full_text = f"{variant.get('hook', '')}\n\n{variant.get('body', '')}\n\n{variant.get('cta', '')}"
+                            variant['character_count'] = len(full_text)
 
                 return result
 
             except json.JSONDecodeError:
                 # Fallback: return template-based copy
-                return self._generate_template_copy(product_name, price, features, market, objective)
+                return self._generate_template_copy(product_name, price, features, market, objective, max_chars)
 
         except Exception as e:
             print(f"Error generating copy: {str(e)}")
             # Fallback to template
-            return self._generate_template_copy(product_name, price, features, market, objective)
+            return self._generate_template_copy(product_name, price, features, market, objective, max_chars)
 
     def _build_prompt(
         self,
@@ -99,7 +126,8 @@ class CopyGenerator:
         features: str,
         market: str,
         objective: str,
-        description: str
+        description: str,
+        max_chars: int
     ) -> str:
         """Build the prompt for Claude API using vigoshop.si best practices"""
 
@@ -181,8 +209,14 @@ TONE & STYLE:
 - Casual, friend-recommending-product (NOT corporate or salesy)
 - Use exclamation points naturally (≈60% of sentences)
 - Emoji density: 1 emoji per 15-20 words
-- Keep under 150 words total per variant
 - Short sentences, active voice, conversational phrases
+
+CHARACTER LIMIT (ABSOLUTE REQUIREMENT):
+- MAXIMUM {max_chars} characters total (hook + body + cta combined)
+- This is a HARD LIMIT - you MUST stay under {max_chars} characters
+- Count every character including spaces, emojis, and line breaks
+- If you exceed {max_chars} characters, the copy will be REJECTED
+- Prioritize brevity and impact over length
 
 URGENCY & SCARCITY (use strategically):
 - "Samo danes!" (Only today!) / "Omejena ponudba!" (Limited offer!)
@@ -194,28 +228,30 @@ CTA REQUIREMENTS:
 - Include urgency + benefit: "Shop Now - Fast EU Delivery!"
 - Use directional emojis: 👇 ➡️
 
+CRITICAL: Each variant MUST be under {max_chars} characters total. No exceptions.
+
 Format as JSON:
 {{
   "variant_1": {{
     "angle": "pain_point",
-    "hook": "Question hook identifying pain (8-12 words)",
-    "body": "PAS framework body with emoji-bullet benefits. Casual tone. Include EU shipping, trust signals, effort-elimination language.",
-    "cta": "Direct action CTA with urgency",
-    "character_count": X
+    "hook": "Question hook identifying pain (8-12 words, max {int(max_chars * 0.15)} chars)",
+    "body": "PAS framework body with emoji-bullet benefits. Casual tone. Include EU shipping, trust signals. MAX {int(max_chars * 0.70)} characters for body.",
+    "cta": "Direct action CTA with urgency (max {int(max_chars * 0.15)} chars)",
+    "character_count": X (MUST be under {max_chars})
   }},
   "variant_2": {{
     "angle": "benefit",
-    "hook": "Benefit-statement hook (8-12 words)",
-    "body": "Transformation-focused body with emoji-bullet benefits. Time efficiency framing. EU shipping. Trust signals.",
-    "cta": "Direct action CTA",
-    "character_count": X
+    "hook": "Benefit-statement hook (8-12 words, max {int(max_chars * 0.15)} chars)",
+    "body": "Transformation-focused body with emoji-bullet benefits. Time efficiency framing. EU shipping. MAX {int(max_chars * 0.70)} characters.",
+    "cta": "Direct action CTA (max {int(max_chars * 0.15)} chars)",
+    "character_count": X (MUST be under {max_chars})
   }},
   "variant_3": {{
     "angle": "social_proof",
-    "hook": "Social proof hook (8-12 words)",
-    "body": "Community-focused body with customer testimonial. Emoji-bullet benefits. EU shipping. FOMO element.",
-    "cta": "Community-joining CTA",
-    "character_count": X
+    "hook": "Social proof hook (8-12 words, max {int(max_chars * 0.15)} chars)",
+    "body": "Community-focused body with customer testimonial. Emoji-bullet benefits. EU shipping. MAX {int(max_chars * 0.70)} characters.",
+    "cta": "Community-joining CTA (max {int(max_chars * 0.15)} chars)",
+    "character_count": X (MUST be under {max_chars})
   }}
 }}
 
@@ -338,7 +374,8 @@ The EU shipping advantage is MANDATORY in every variant - it's the core differen
         price: str,
         features: str,
         market: str,
-        objective: str
+        objective: str,
+        max_chars: int = 150
     ) -> Dict:
         """Fallback template-based copy generation (vigoshop.si style)"""
 
@@ -352,23 +389,20 @@ The EU shipping advantage is MANDATORY in every variant - it's the core differen
                 "hook": "Tired of waiting weeks for products from China?",
                 "body": f"Get your {product_name} delivered in just 2-3 days from our EU warehouse! No more endless waiting. 🚀\n\n🔥 Fast EU shipping - arrives in 2-3 days, not weeks\n🎯 {first_feature}\n✅ 100% money-back guarantee\n💪 Thousands of satisfied customers across Europe\n\nJust {price} with free shipping. Order now! 🎁",
                 "cta": "Shop Now - Fast EU Delivery! 👉",
-                "character_count": 148,
-                "engagement_score": 78
+                "character_count": 148
             },
             "variant_2": {
                 "angle": "benefit",
                 "hook": "Imagine getting premium quality in just 2-3 days...",
                 "body": f"Your {product_name} arrives fast from our EU warehouse - no customs, no delays! 😊\n\n🔥 Ships in 2-3 days from EU (not China!)\n🎯 {first_feature}\n⏱️ Save time - no month-long waiting\n✅ Verified 5-star reviews\n\nLimited stock at {price}. Thousands already ordered! 💎",
                 "cta": "Get Yours Today! 🚀",
-                "character_count": 142,
-                "engagement_score": 82
+                "character_count": 142
             },
             "variant_3": {
                 "angle": "social_proof",
                 "hook": "Join 10,000+ happy customers across Europe!",
                 "body": f"The {product_name} everyone's talking about! ⭐\n\n\"Best purchase this year - arrived in 2 days!\" - Real customer\n\n🔥 Fast 2-3 day EU shipping\n🎯 {first_feature}\n✅ Money-back guarantee\n💪 Verified reviews\n\nOnly {price}. Don't miss out! 🎁",
                 "cta": "Join Thousands of Happy Customers! 👇",
-                "character_count": 138,
-                "engagement_score": 85
+                "character_count": 138
             }
         }

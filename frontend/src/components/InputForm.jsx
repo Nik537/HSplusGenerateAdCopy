@@ -6,6 +6,15 @@ const InputForm = ({ formData, setFormData, onSubmit, loading, onLoadExample }) 
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleSelectChange = (e, fieldName, customFieldName) => {
+    const { value } = e.target;
+    if (value === 'custom') {
+      setFormData(prev => ({ ...prev, [customFieldName]: true, [fieldName]: '' }));
+    } else {
+      setFormData(prev => ({ ...prev, [customFieldName]: false, [fieldName]: value }));
+    }
+  };
+
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Facebook Ad Copy Generator</h2>
@@ -66,50 +75,136 @@ const InputForm = ({ formData, setFormData, onSubmit, loading, onLoadExample }) 
         <div style={styles.formRow}>
           <div style={{ ...styles.formGroup, flex: 1 }}>
             <label style={styles.label}>Target Market *</label>
-            <select
-              name="market"
-              value={formData.market}
-              onChange={handleChange}
-              style={styles.select}
-              required
-            >
-              <option value="SI">Slovenia (SI)</option>
-              <option value="DE">Germany (DE)</option>
-              <option value="IT">Italy (IT)</option>
-              <option value="AT">Austria (AT)</option>
-              <option value="HR">Croatia (HR)</option>
-              <option value="BA">Bosnia (BA)</option>
-            </select>
+            {!formData.customMarket ? (
+              <select
+                name="market"
+                value={formData.market}
+                onChange={(e) => handleSelectChange(e, 'market', 'customMarket')}
+                style={styles.select}
+                required
+              >
+                <option value="Slovenia">Slovenia (SI)</option>
+                <option value="Germany">Germany (DE)</option>
+                <option value="Italy">Italy (IT)</option>
+                <option value="Austria">Austria (AT)</option>
+                <option value="Croatia">Croatia (HR)</option>
+                <option value="Bosnia">Bosnia (BA)</option>
+                <option value="custom">✏️ Custom</option>
+              </select>
+            ) : (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  name="market"
+                  value={formData.market}
+                  onChange={handleChange}
+                  placeholder="Enter custom market"
+                  style={{ ...styles.input, flex: 1 }}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, customMarket: false, market: 'Slovenia' }))}
+                  style={styles.resetButton}
+                >
+                  ↶
+                </button>
+              </div>
+            )}
           </div>
 
           <div style={{ ...styles.formGroup, flex: 1 }}>
             <label style={styles.label}>Ad Objective *</label>
-            <select
-              name="objective"
-              value={formData.objective}
-              onChange={handleChange}
-              style={styles.select}
-              required
-            >
-              <option value="Awareness">Awareness</option>
-              <option value="Conversion">Conversion</option>
-              <option value="Engagement">Engagement</option>
-            </select>
+            {!formData.customObjective ? (
+              <select
+                name="objective"
+                value={formData.objective}
+                onChange={(e) => handleSelectChange(e, 'objective', 'customObjective')}
+                style={styles.select}
+                required
+              >
+                <option value="Awareness">Awareness</option>
+                <option value="Conversion">Conversion</option>
+                <option value="Engagement">Engagement</option>
+                <option value="custom">✏️ Custom</option>
+              </select>
+            ) : (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  name="objective"
+                  value={formData.objective}
+                  onChange={handleChange}
+                  placeholder="Enter custom objective"
+                  style={{ ...styles.input, flex: 1 }}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, customObjective: false, objective: 'Conversion' }))}
+                  style={styles.resetButton}
+                >
+                  ↶
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>AI Model</label>
-          <select
-            name="model"
-            value={formData.model}
-            onChange={handleChange}
-            style={styles.select}
-          >
-            <option value="fast">⚡ Fast (Haiku 4.5) - Recommended</option>
-            <option value="smart">🧠 Smart (Sonnet 4.5) - Premium Quality</option>
-          </select>
-          <small style={styles.hint}>Fast: 2-3s response | Smart: 5-8s response, better quality</small>
+        <div style={styles.formRow}>
+          <div style={{ ...styles.formGroup, flex: '0 0 35%' }}>
+            <label style={styles.label}>AI Model</label>
+            <select
+              name="model"
+              value={formData.model}
+              onChange={handleChange}
+              style={styles.select}
+            >
+              <option value="fast">⚡ Fast (Haiku)</option>
+              <option value="smart">🧠 Smart (Sonnet)</option>
+            </select>
+            <small style={styles.hint}>Fast: 2-3s | Smart: 5-8s</small>
+          </div>
+
+          <div style={{ ...styles.formGroup, flex: '1' }}>
+            <label style={styles.label}>Max Characters</label>
+            {!formData.customMaxChars ? (
+              <select
+                name="max_chars"
+                value={formData.max_chars}
+                onChange={(e) => handleSelectChange(e, 'max_chars', 'customMaxChars')}
+                style={styles.select}
+              >
+                <option value="125">125 characters (Mobile)</option>
+                <option value="150">150 characters (Recommended)</option>
+                <option value="200">200 characters (Extended)</option>
+                <option value="300">300 characters (Long form)</option>
+                <option value="custom">✏️ Custom</option>
+              </select>
+            ) : (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="number"
+                  name="max_chars"
+                  value={formData.max_chars}
+                  onChange={handleChange}
+                  placeholder="Enter custom limit"
+                  min="50"
+                  max="650"
+                  style={{ ...styles.input, flex: 1 }}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, customMaxChars: false, max_chars: '150' }))}
+                  style={styles.resetButton}
+                >
+                  ↶
+                </button>
+              </div>
+            )}
+            <small style={styles.hint}>Shorter copy performs better on mobile</small>
+          </div>
         </div>
 
         <button
@@ -122,31 +217,6 @@ const InputForm = ({ formData, setFormData, onSubmit, loading, onLoadExample }) 
         >
           {loading ? 'Generating...' : '✨ Generate Ad Copy'}
         </button>
-
-        <div style={styles.examplesSection}>
-          <p style={styles.examplesLabel}>Or try an example:</p>
-          <button
-            type="button"
-            onClick={() => onLoadExample(0)}
-            style={styles.exampleButton}
-          >
-            Beauty Product
-          </button>
-          <button
-            type="button"
-            onClick={() => onLoadExample(1)}
-            style={styles.exampleButton}
-          >
-            Electronics
-          </button>
-          <button
-            type="button"
-            onClick={() => onLoadExample(2)}
-            style={styles.exampleButton}
-          >
-            Automotive
-          </button>
-        </div>
       </form>
     </div>
   );
@@ -250,6 +320,18 @@ const styles = {
     borderRadius: '6px',
     cursor: 'pointer',
     transition: 'all 0.2s'
+  },
+  resetButton: {
+    padding: '10px 14px',
+    fontSize: '16px',
+    fontWeight: '500',
+    color: '#666',
+    backgroundColor: '#f3f4f6',
+    border: '1px solid #ddd',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    minWidth: '44px'
   }
 };
 

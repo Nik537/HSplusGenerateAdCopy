@@ -32,7 +32,6 @@ ${variant.body}
 CTA: ${variant.cta}
 
 Character Count: ${variant.character_count}
-Engagement Score: ${variant.engagement_score}/100
 ${'='.repeat(50)}
 `;
       })
@@ -134,17 +133,6 @@ const AdVariant = ({ variantName, variant, onCopy }) => {
         <div style={styles.stat}>
           <span style={styles.statLabel}>Characters:</span>
           <span style={styles.statValue}>{variant.character_count}</span>
-        </div>
-        <div style={styles.stat}>
-          <span style={styles.statLabel}>Engagement Score:</span>
-          <span
-            style={{
-              ...styles.statValue,
-              color: getScoreColor(variant.engagement_score)
-            }}
-          >
-            {variant.engagement_score}/100
-          </span>
         </div>
       </div>
     </div>
