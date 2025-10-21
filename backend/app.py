@@ -28,10 +28,14 @@ CORS(app, resources={
 
 # Initialize services
 scraper = VigoShopScraper()
+copy_generator_error = None
 try:
     copy_generator = CopyGenerator()
 except Exception as e:
-    print(f"Warning: {e}")
+    import traceback
+    copy_generator_error = str(e)
+    print(f"Warning: Failed to initialize CopyGenerator: {e}")
+    print(traceback.format_exc())
     copy_generator = None
 
 @app.route('/health', methods=['GET'])
@@ -52,7 +56,8 @@ def health_check():
         'debug': {
             'anthropic_env_var_exists': anthropic_key_exists,
             'openai_env_var_exists': openai_key_exists,
-            'copy_generator_exists': copy_generator is not None
+            'copy_generator_exists': copy_generator is not None,
+            'initialization_error': copy_generator_error
         }
     })
 
