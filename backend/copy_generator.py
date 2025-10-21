@@ -45,61 +45,31 @@ class CopyGenerator:
                 product_name, price, features, market, objective, description, max_chars
             )
 
-            # Model selection mapping
+            # Model selection mapping (Claude only)
             model_map = {
-                # Claude models
                 "claude-haiku": "claude-haiku-4-5-20251001",
                 "claude-sonnet": "claude-sonnet-4-5-20250929",
-                # OpenAI GPT-4 models
-                "gpt-4o": "gpt-4o",
-                "gpt-4o-mini": "gpt-4o-mini",
-                # OpenAI o1 models
-                "o1": "o1",
-                "o1-mini": "o1-mini",
-                # OpenAI GPT-5 models
-                "gpt-5": "gpt-5",
-                "gpt-5-mini": "gpt-5-mini",
-                # Legacy aliases
                 "fast": "claude-haiku-4-5-20251001",
                 "smart": "claude-sonnet-4-5-20250929"
             }
             selected_model = model_map.get(model, "claude-haiku-4-5-20251001")
 
-            # Determine which API to use
-            is_openai = selected_model.startswith("gpt-") or selected_model.startswith("o1")
+            if not self.anthropic_client:
+                raise ValueError("Anthropic API key not configured")
 
-            if is_openai:
-                if not self.openai_client:
-                    raise ValueError("OpenAI API key not configured")
-
-                # OpenAI API call
-                response = self.openai_client.chat.completions.create(
-                    model=selected_model,
-                    messages=[
-                        {"role": "system", "content": "You are an expert Facebook ads copywriter for vigoshop.si, specializing in dropshipping products for European markets."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    temperature=0.7,
-                    max_tokens=2000
-                )
-                response_text = response.choices[0].message.content
-            else:
-                if not self.anthropic_client:
-                    raise ValueError("Anthropic API key not configured")
-
-                # Claude API call
-                message = self.anthropic_client.messages.create(
-                    model=selected_model,
-                    max_tokens=2000,
-                    temperature=0.7,
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ]
-                )
-                response_text = message.content[0].text
+            # Claude API call
+            message = self.anthropic_client.messages.create(
+                model=selected_model,
+                max_tokens=2000,
+                temperature=0.7,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+            response_text = message.content[0].text
 
             # Try to parse JSON from response
             try:
