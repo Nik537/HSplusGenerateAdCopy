@@ -10,20 +10,8 @@ from copy_generator import CopyGenerator
 load_dotenv()
 
 app = Flask(__name__)
-# Enable CORS for frontend - allow both local and Firebase domains
-CORS(app, resources={
-    r"/*": {
-        "origins": [
-            "http://localhost:3000",
-            "http://localhost:5173",
-            "https://hsplusfbadscopy.web.app",
-            "https://hsplusfbadscopy.firebaseapp.com"
-        ],
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"],
-        "supports_credentials": True
-    }
-})
+# Enable CORS for all origins (for development/testing)
+CORS(app)
 
 # Initialize services
 scraper = VigoShopScraper()
