@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - ./backend:/app/backend
+    restart: unless-stopped
+
+  frontend:
+    image: node:18-alpine
+    working_dir: /app/frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+    command: npm run dev -- --host
+    depends_on:
+      - backend
+    restart: unless-stopped
